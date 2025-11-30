@@ -1,7 +1,10 @@
 plugins {
+    id("com.google.devtools.ksp") // Para Room
+
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
 }
 
 android {
@@ -40,7 +43,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -56,4 +58,30 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    ksp(libs.androidx.room.compiler)
+
+
+    // UI
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+// Navegación (NavController)
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+// ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+// Base de Datos (Room / SQLite)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx) // Para Coroutines y Flow
+    ksp(libs.androidx.room.compiler) // Compilador de Room
+// Ubicación (GPS)
+    implementation(libs.play.services.location)
+// Mapas (OSM)
+    implementation(libs.osmdroid.android)
+
+
 }
