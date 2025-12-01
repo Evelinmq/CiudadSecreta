@@ -40,7 +40,7 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 osmdroid-android = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
 
 [plugins]
-android-application = { id = "com.android.application", version = "8.6.0" }
+android-application = { id = "com.android.application", version = "8.13.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.0.0" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.0.0" }
 ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.21" }
