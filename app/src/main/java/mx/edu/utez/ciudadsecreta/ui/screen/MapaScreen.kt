@@ -1,4 +1,4 @@
-package mx.edu.utez.ciudadsecreta.ui.views
+package mx.edu.utez.ciudadsecreta.ui.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
