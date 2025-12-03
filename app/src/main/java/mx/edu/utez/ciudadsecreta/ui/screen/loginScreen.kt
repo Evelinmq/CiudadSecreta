@@ -1,5 +1,6 @@
 package mx.edu.utez.ciudadsecreta.ui.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import mx.edu.utez.ciudadsecreta.viewmodel.LoginViewModel
+
 
 @Composable
 fun LoginScreen(
@@ -43,6 +46,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text("Iniciar Sesión", style = MaterialTheme.typography.headlineLarge)
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -94,4 +98,7 @@ fun LoginScreen(
     }
 
 
+
 }
+
+

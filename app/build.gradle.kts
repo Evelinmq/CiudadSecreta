@@ -1,5 +1,5 @@
 plugins {
-    id("com.google.devtools.ksp") // Para Room
+    id("com.google.devtools.ksp")
 
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -30,60 +30,73 @@ android {
             )
         }
     }
+
     compileOptions {
+
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+    }
+
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes +=  "META-INF/io.netty.versions.properties"
+        }
     }
 }
 
 dependencies {
 
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    // --- DEPENDENCIAS COMPOSE Y BÁSICAS ---
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.activity:activity-compose:1.9.0")
+
+    // COMPOSE BOM (Base de versiones)
     implementation(platform(libs.androidx.compose.bom))
+
+    // UI Compose Components (Limpiado de duplicados, se mantienen las referencias 'libs.')
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.firebase.appdistribution.gradle)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+
+    // Lifecycle y ViewModel
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1") // Mantengo esta por si la versión es clave
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Navegación
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // --- ROOM (Base de Datos) ---
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler) // Compilador KSP
+
+    // --- RED Y LOCALIZACIÓN ---
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.play.services.location)
+    implementation(libs.osmdroid.android)
+
+    // --- TEST Y DEBUG ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    ksp(libs.androidx.room.compiler)
 
-
-    // UI
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation(platform("androidx.compose:compose-bom:2024.05.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-// Navegación (NavController)
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-// ViewModel
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-// Base de Datos (Room / SQLite)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx) // Para Coroutines y Flow
-    ksp(libs.androidx.room.compiler) // Compilador de Room
-// Ubicación (GPS)
-    implementation(libs.play.services.location)
-// Mapas (OSM)
-    implementation(libs.osmdroid.android)
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-
+    // --- OTROS (Revisa esta línea si da error) ---
+    // Si 'firebase.appdistribution.gradle' es un plugin, debe ir en el bloque 'plugins'.
+    implementation(libs.firebase.appdistribution.gradle)
 }

@@ -6,18 +6,6 @@ import mx.edu.utez.ciudadsecreta.data.retrofit.ApiService
 
 
 class UserRepository(private val api: ApiService) {
-    suspend fun registrarUsuario(user: UsuarioRequest): Result<String> {
-        return try {
-            val response = api.registrarUsuario(user)
-            if (response.isSuccessful) {
-                Result.success("Usuario registrado con éxito")
-            } else {
-                Result.failure(Exception("Error: ${response.code()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
 
     suspend fun login(nombreUsuario: String, contrasena: String): Result<Boolean> {
         return try {

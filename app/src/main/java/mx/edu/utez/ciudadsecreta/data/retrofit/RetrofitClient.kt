@@ -7,11 +7,11 @@ object RetrofitClient {
 
     private const val BASE_URL = "https://url/"
 
-    val api: PuntoApi by lazy {
+    val api: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(PuntoApi::class.java)
+            .create(ApiService::class.java)
     }
 }
