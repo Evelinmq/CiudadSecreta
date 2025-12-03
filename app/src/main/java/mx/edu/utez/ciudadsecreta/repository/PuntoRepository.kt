@@ -10,4 +10,11 @@ class PuntoRepository(private val api: PuntoApi) {
 
     suspend fun agregarPunto(punto: PuntoMarcado): PuntoMarcado =
         api.crearPunto(punto)
+
+    suspend fun actualizarPunto(punto: PuntoMarcado): PuntoMarcado =
+        api.actualizarPunto(punto.id, punto)
+
+    suspend fun eliminarPunto(id: Int) =
+        api.eliminarPunto(id)
+
 }

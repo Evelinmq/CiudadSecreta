@@ -47,4 +47,27 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
             }
         }
     }
+
+    fun actualizarPunto(punto: PuntoMarcado) {
+        viewModelScope.launch {
+            try {
+                repo.actualizarPunto(punto)
+                cargarPuntos()
+            } catch (e: Exception) {
+                println("Error actualizando punto: $e")
+            }
+        }
+    }
+
+    fun eliminarPunto(id: Int) {
+        viewModelScope.launch {
+            try {
+                repo.eliminarPunto(id)
+                cargarPuntos()
+            } catch (e: Exception) {
+                println("Error eliminando punto: $e")
+            }
+        }
+    }
+
 }
