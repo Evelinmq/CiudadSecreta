@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UsuarioRequest (
 
-    @SerializedName("nombreUsuario") val nombreUsuario: String,
+    @SerializedName("nombre") val nombre: String,
     @SerializedName("correo") val correo: String,
-    @SerializedName("password") val contrasena: String
+    @SerializedName("password") val password: String
 )

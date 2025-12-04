@@ -112,12 +112,12 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     }
 
     // abre diálogo para ver el rumor
-    fun abrirRumor(mensaje: String) {
+    /*fun abrirRumor(mensaje: String) {
         _uiState.value = MapUiState(
             showViewDialog = true,
             mensaje = mensaje
         )
-    }
+    }*/
 
     // Cerrar diálogo
     fun cerrarDialogos() {

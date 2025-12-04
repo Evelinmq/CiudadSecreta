@@ -16,8 +16,11 @@ import mx.edu.utez.ciudadsecreta.data.retrofit.ApiService
 import mx.edu.utez.ciudadsecreta.data.retrofit.RetrofitClient
 import mx.edu.utez.ciudadsecreta.repository.UserRepository
 import mx.edu.utez.ciudadsecreta.ui.screen.LoginScreen
+import mx.edu.utez.ciudadsecreta.ui.screen.RegisterScreen
 import mx.edu.utez.ciudadsecreta.viewmodel.LoginViewModel
 import mx.edu.utez.ciudadsecreta.viewmodel.factories.LoginViewModelFactory
+import mx.edu.utez.ciudadsecreta.viewmodel.RegisterViewModel
+import mx.edu.utez.ciudadsecreta.viewmodel.factories.RegisterViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +34,11 @@ fun AppNavigation() {
     val userRepository = UserRepository(apiService as ApiService)
 
     val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(userRepository))
+    val registerViewModel: RegisterViewModel = viewModel(factory = RegisterViewModelFactory(
+        userRepository
+    )
+    )
+
 
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
@@ -61,6 +69,20 @@ fun AppNavigation() {
                         navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
+                    }
+                )
+            }
+            composable(Screen.Register.route) {
+                RegisterScreen(
+                    viewModel = registerViewModel,
+                    onRegistrationSuccess = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    },
+                    onNavigateBack = {
+                        // El usuario presionó "Volver"
+                        navController.popBackStack()
                     }
                 )
             }
