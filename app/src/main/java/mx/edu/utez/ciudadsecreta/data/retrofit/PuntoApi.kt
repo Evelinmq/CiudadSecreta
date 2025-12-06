@@ -1,6 +1,7 @@
 package mx.edu.utez.ciudadsecreta.data.retrofit
 
-import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
+import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
+import mx.edu.utez.ciudadsecreta.data.model.PuntoResponse
 import retrofit2.http.GET
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -11,18 +12,18 @@ import retrofit2.http.Path
 interface PuntoApi {
 
     @GET("puntos")
-    suspend fun obtenerPuntos(): List<PuntoMarcado>
+    suspend fun obtenerPuntos(): List<PuntoResponse>
 
     @POST("puntos")
     suspend fun crearPunto(
-        @Body punto: PuntoMarcado
-    ): PuntoMarcado
+        @Body punto: PuntoRequest
+    ): PuntoResponse
 
     @PUT("puntos/{id}")
     suspend fun actualizarPunto(
         @Path("id") id: Int,
-        @Body punto: PuntoMarcado
-    ): PuntoMarcado
+        @Body punto: PuntoRequest
+    ): PuntoResponse
 
     @DELETE("puntos/{id}")
     suspend fun eliminarPunto(

@@ -20,16 +20,19 @@ fun DialogAgregarRumor(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Nuevo rumor") },
+        title = { Text("Nuevo secreto") },
         text = {
             OutlinedTextField(
                 value = texto,
                 onValueChange = { texto = it },
-                label = { Text("¿Qué rumor quieres agregar?") }
+                label = { Text("¿Qué secreto quieres agregar?") }
             )
         },
         confirmButton = {
-            Button (onClick = { onSave(texto) }) {
+            Button(
+                onClick = { onSave(texto) },
+                enabled = texto.isNotBlank()       // evita guardar un rumor vacío
+            ) {
                 Text("Guardar")
             }
         },
@@ -40,3 +43,4 @@ fun DialogAgregarRumor(
         }
     )
 }
+

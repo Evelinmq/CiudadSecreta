@@ -1,6 +1,6 @@
 package mx.edu.utez.ciudadsecreta.data.model
 
-data class PuntoMarcado(
+data class PuntoResponse(
     val id: Int,
     val lat: Double,
     val lon: Double,
@@ -8,4 +8,3 @@ data class PuntoMarcado(
     val autor: String,
     val timestamp: Long
 )
-

@@ -1,4 +1,8 @@
 package mx.edu.utez.ciudadsecreta.ui.screen
+//ESTE YA NO SE USA PORQUE LO UNIFIQUÉ CON EDITARRUMOR EN LA SCREEN DialogRumorSreen
+//Lo dejo aquí comentado por cualquier cosa
+
+/*
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -39,3 +43,5 @@ fun DialogVerRumor(
     )
 }
 
+
+ */

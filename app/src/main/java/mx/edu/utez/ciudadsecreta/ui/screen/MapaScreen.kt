@@ -3,8 +3,10 @@ package mx.edu.utez.ciudadsecreta.ui.screen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import mx.edu.utez.ciudadsecreta.R
+import mx.edu.utez.ciudadsecreta.ui.theme.CiudadSecretaTheme
 import mx.edu.utez.ciudadsecreta.viewmodel.MapViewModel
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
@@ -16,7 +18,7 @@ import org.osmdroid.views.overlay.Marker
 fun MapaScreen(viewModel: MapViewModel) {
 
     val puntos by viewModel.puntos.collectAsState()
-    val iuState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     AndroidView(
         factory = { ctx ->
@@ -27,14 +29,14 @@ fun MapaScreen(viewModel: MapViewModel) {
         },
         update = { map ->
             val eventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
-                //Abre el rumor si toca algún marcador(icono) en el mapa
+
                 override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                     if (p == null) return false
 
                     val markerTapped = puntos.firstOrNull { punto ->
-                        val dist = GeoPoint(p.lat, p.lon).distanceToAsDouble(
-                            GeoPoint(punto.lat, punto.lon)
-                        )
+                        val dist = GeoPoint(p.latitude, p.longitude)
+                            .distanceToAsDouble(GeoPoint(punto.lat, punto.lon))
+
                         dist < 20
                     }
 
@@ -46,7 +48,6 @@ fun MapaScreen(viewModel: MapViewModel) {
                     return false
                 }
 
-                //Prepara un nuevo rumor
                 override fun longPressHelper(p: GeoPoint?): Boolean {
                     if (p != null) {
                         viewModel.prepararNuevoRumor(
@@ -57,11 +58,11 @@ fun MapaScreen(viewModel: MapViewModel) {
                     return true
                 }
             })
+
             map.overlays.clear()
             map.overlays.add(eventsOverlay)
 
-            //Icono para los rumores
-            val icon =  map.context.getDrawable(R.drawable.rumor_icon)
+            val icon = map.context.getDrawable(R.drawable.rumor_icon)
 
             puntos.forEach { punto ->
                 val marker = Marker(map).apply {
@@ -72,37 +73,46 @@ fun MapaScreen(viewModel: MapViewModel) {
                 }
                 map.overlays.add(marker)
             }
+
             map.invalidate()
         }
     )
 
-    //Dialogo de agregar rumor
-    if (iuState.showAddDialog) {
+    // Dialogo de agregar rumor (solo texto)
+    if (uiState.showAddDialog) {
         DialogAgregarRumor(
-          onDismiss = { viewModel.cerrarDialogos()},
-            onSave = {texto -> viewModel.guardarRumor(texto)}
+            onDismiss = { viewModel.cerrarDialogos() },
+            onSave = { texto -> viewModel.guardarRumor(texto) }
         )
     }
 
-    // Ver rumor
-    if (iuState.showViewDialog && iuState.puntoSeleccionado != null) {
-        DialogVerRumor(
-            punto = iuState.puntoSeleccionado!!,
+    // Diálogo combinado (ver / editar / eliminar)
+    if (uiState.showRumorDialog && uiState.puntoSeleccionado != null) {
+        DialogRumorScreen(
+            punto = uiState.puntoSeleccionado!!,
+            mensajeActual = uiState.mensaje,
             usuarioActual = "Secreto",
-            onEditar = { viewModel.prepararEdicion() },
-            onEliminar = { viewModel.borrarRumor() },
-            onDismiss = { viewModel.cerrarDialogos() }
+
+            onGuardar = { nuevo ->
+                viewModel.editarRumor(nuevo)
+            },
+
+            onEliminar = {
+                viewModel.borrarRumor()
+            },
+
+            onDismiss = {
+                viewModel.cerrarDialogos()
+            }
         )
     }
-
-    // Editar rumor
-    if (iuState.showEditDialog) {
-        DialogEditarRumor(
-            mensajeInicial = iuState.mensaje,
-            onGuardar = { nuevo -> viewModel.editarRumor(nuevo) },
-            onDismiss = { viewModel.cerrarDialogos() }
-        )
-    }
-
 }
+
+
+/*@Preview(showBackground = true)
+fun PreviewMap(){
+    CiudadSecretaTheme {
+        MapaScreen()
+    }
+}*/
 
