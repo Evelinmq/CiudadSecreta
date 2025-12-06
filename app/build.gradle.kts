@@ -55,6 +55,13 @@ android {
 }
 
 dependencies {
+    // --- RETROFIT + GSON ---
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+
+    // --- OKHTTP LOGGING ---
+    implementation(libs.okhttp.logging)
+
 
     // --- DEPENDENCIAS COMPOSE Y BÁSICAS ---
     implementation("androidx.core:core-ktx:1.13.1")
@@ -83,8 +90,8 @@ dependencies {
     ksp(libs.androidx.room.compiler) // Compilador KSP
 
     // --- RED Y LOCALIZACIÓN ---
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    //implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    //implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation(libs.play.services.location)
     implementation(libs.osmdroid.android)
 
