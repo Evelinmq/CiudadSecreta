@@ -7,5 +7,6 @@ data class PuntoMarcado(
     val mensaje: String,
     val autor: String,
     val timestamp: Long
+
 )
 

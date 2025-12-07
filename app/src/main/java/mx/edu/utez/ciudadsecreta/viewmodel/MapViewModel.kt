@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import mx.edu.utez.ciudadsecreta.data.model.DialogType
 import mx.edu.utez.ciudadsecreta.data.model.MapUiState
 import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
+import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
 import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
 
 class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
@@ -18,13 +19,20 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
 
-    init { cargarPuntos() }
+    init {
+        cargarPuntos()
+    }
 
     fun cargarPuntos() {
         viewModelScope.launch {
-            _puntos.value = repo.obtenerPuntos()
+            val result = repo.obtenerPuntos()
+            result.onSuccess { puntosList ->
+
+            }.onFailure { exception ->
+            }
         }
     }
+
 
     //Abrir diálogos
     fun prepararNuevoRumor(lat: Double, lon: Double) {
@@ -54,9 +62,19 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     //Guardar
     fun guardarRumor(texto: String) {
         val st = uiState.value
-        agregarPunto(st.lat, st.lon, texto)
-        cerrarDialogo()
+
+        viewModelScope.launch {
+
+            repo.crearPunto(
+                req = PuntoRequest(lat = st.lat, lon = st.lon, mensaje = texto,autor = texto )
+            ).onSuccess {
+                cargarPuntos()
+                cerrarDialogo()
+            }
+        }
     }
+
+
 
     fun editarRumor(nuevoMensaje: String) {
         val punto = _uiState.value.puntoSeleccionado ?: return

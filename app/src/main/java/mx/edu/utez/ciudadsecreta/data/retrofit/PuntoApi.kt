@@ -30,4 +30,7 @@ interface PuntoApi {
         @Path("id") id: Int
     )
 
+    @Post("puntos")
+    suspend fun agregarPuntos()
+
 }

@@ -24,7 +24,7 @@ class RegisterViewModel(private val repository: UserRepository) : ViewModel() {
     var isRegisterSuccess by mutableStateOf(false)
 
     fun onRegisterClick() {
-        // 1. Validaciones Locales
+
         if (nombre.isBlank() || correo.isBlank() || password.isBlank()) {
             errorMessage = "Todos los campos son obligatorios"
             return
@@ -34,7 +34,7 @@ class RegisterViewModel(private val repository: UserRepository) : ViewModel() {
             return
         }
 
-        // 2. Preparar datos y llamar al repo
+
         isLoading = true
         errorMessage = null
         successMessage = null
@@ -60,6 +60,8 @@ class RegisterViewModel(private val repository: UserRepository) : ViewModel() {
             }
         }
     }
+
+
 
     private fun limpiarFormulario() {
         nombre = ""
