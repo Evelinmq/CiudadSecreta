@@ -79,9 +79,16 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     fun editarRumor(nuevoMensaje: String) {
         val punto = _uiState.value.puntoSeleccionado ?: return
         viewModelScope.launch {
-            repo.actualizarPunto(punto.copy(mensaje = nuevoMensaje))
-            cargarPuntos()
-            cerrarDialogo()
+            val request = PuntoRequest(
+                lat = punto.lat,
+                lon = punto.lon,
+                mensaje = nuevoMensaje,
+                autor = punto.autor)
+            repo.actualizarPunto(id = punto.id, req = request)
+                .onSuccess {
+                    cargarPuntos()
+                    cerrarDialogo()
+                }
         }
     }
 
