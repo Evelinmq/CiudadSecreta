@@ -68,8 +68,8 @@ fun AppNavigation() {
                     },
                     onLoginSuccess = {
 
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
+                        navController.navigate(Screen.Mapa.route) {
+                            popUpTo(Screen.Mapa.route) { inclusive = true }
                         }
                     }
                 )
