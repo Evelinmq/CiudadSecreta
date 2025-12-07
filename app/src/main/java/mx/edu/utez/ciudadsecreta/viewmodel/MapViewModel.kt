@@ -69,7 +69,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                 req = PuntoRequest(lat = st.lat, lon = st.lon, mensaje = texto,autor = texto )
             ).onSuccess {
                 cargarPuntos()
-                cerrarDialogo()
+                cerrarDialogos()
             }
         }
     }
@@ -87,7 +87,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
             repo.actualizarPunto(id = punto.id, req = request)
                 .onSuccess {
                     cargarPuntos()
-                    cerrarDialogo()
+                    cerrarDialogos()
                 }
         }
     }
@@ -97,11 +97,14 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
         viewModelScope.launch {
             repo.eliminarPunto(punto.id)
             cargarPuntos()
-            cerrarDialogo()
+            cerrarDialogos()
         }
     }
 
-    fun cerrarDialogo() {
+    fun cerrarDialogos() {
         _uiState.value = MapUiState()
     }
+
+
+
 }

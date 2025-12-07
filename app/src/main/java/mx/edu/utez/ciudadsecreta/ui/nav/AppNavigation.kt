@@ -16,8 +16,10 @@ import mx.edu.utez.ciudadsecreta.data.retrofit.ApiService
 import mx.edu.utez.ciudadsecreta.data.retrofit.RetrofitClient
 import mx.edu.utez.ciudadsecreta.repository.UserRepository
 import mx.edu.utez.ciudadsecreta.ui.screen.LoginScreen
+import mx.edu.utez.ciudadsecreta.ui.screen.MapaScreen
 import mx.edu.utez.ciudadsecreta.ui.screen.RegisterScreen
 import mx.edu.utez.ciudadsecreta.viewmodel.LoginViewModel
+import mx.edu.utez.ciudadsecreta.viewmodel.MapViewModel
 import mx.edu.utez.ciudadsecreta.viewmodel.factories.LoginViewModelFactory
 import mx.edu.utez.ciudadsecreta.viewmodel.RegisterViewModel
 import mx.edu.utez.ciudadsecreta.viewmodel.factories.RegisterViewModelFactory
@@ -62,7 +64,7 @@ fun AppNavigation() {
                 LoginScreen(
                     viewModel = loginViewModel,
                     onNavigateToRegister = {
-                        navController.navigate(Screen.Login.route)
+                        navController.navigate(Screen.Register.route)
                     },
                     onLoginSuccess = {
 
@@ -86,6 +88,13 @@ fun AppNavigation() {
                     }
                 )
             }
+
+            composable(Screen.Mapa.route) {
+                MapaScreen(viewModel = viewModel())
+            }
+
+
+
         }
     }
 

@@ -3,10 +3,9 @@ package mx.edu.utez.ciudadsecreta.ui.screen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import mx.edu.utez.ciudadsecreta.R
-import mx.edu.utez.ciudadsecreta.ui.theme.CiudadSecretaTheme
+import mx.edu.utez.ciudadsecreta.data.model.DialogType
 import mx.edu.utez.ciudadsecreta.viewmodel.MapViewModel
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
@@ -79,15 +78,17 @@ fun MapaScreen(viewModel: MapViewModel) {
     )
 
     // Dialogo de agregar rumor (solo texto)
-    if (uiState.showAddDialog) {
+    if (uiState.currentDialog == DialogType.ADD) {
         DialogAgregarRumor(
             onDismiss = { viewModel.cerrarDialogos() },
             onSave = { texto -> viewModel.guardarRumor(texto) }
         )
     }
 
-    // Diálogo combinado (ver / editar / eliminar)
-    if (uiState.showRumorDialog && uiState.puntoSeleccionado != null) {
+// Diálogo combinado (ver / editar / eliminar)
+
+    if (uiState.currentDialog == DialogType.VIEW || uiState.currentDialog == DialogType.EDIT) {
+
         DialogRumorScreen(
             punto = uiState.puntoSeleccionado!!,
             mensajeActual = uiState.mensaje,

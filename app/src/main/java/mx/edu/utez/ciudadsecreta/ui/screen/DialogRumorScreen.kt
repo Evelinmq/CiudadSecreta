@@ -14,7 +14,8 @@ fun DialogRumorScreen(
     usuarioActual: String,
     onGuardar: (String) -> Unit,
     onEliminar: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    mensajeActual: String
 ) {
     val esAutor = punto.autor == usuarioActual
 
