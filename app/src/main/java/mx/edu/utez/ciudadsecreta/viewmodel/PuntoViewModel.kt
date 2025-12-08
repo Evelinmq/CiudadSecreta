@@ -11,20 +11,17 @@ import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
 
 class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
 
-    //Lista de puntos en el mapa
+
     private val _puntos = MutableStateFlow<List<PuntoResponse>>(emptyList())
     val puntos = _puntos.asStateFlow()
 
-    // Estado de carga -> muestra spinner de carga
     private val _cargando = MutableStateFlow(false)
     val cargando = _cargando.asStateFlow()
 
-    // Mensaje de error o éxito
     private val _mensaje = MutableStateFlow<String?>(null)
     val mensaje = _mensaje.asStateFlow()
 
 
-    //GET -> obtiene los puntos
     fun cargarPuntos() {
         viewModelScope.launch {
             _cargando.value = true
@@ -34,7 +31,7 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
             if (result.isSuccess) {
                 _puntos.value = result.getOrNull()!!
             } else {
-                _mensaje.value = "⚠⚠⚠ Error al obtener puntos"
+                _mensaje.value = "Error al obtener puntos"
             }
 
             _cargando.value = false
@@ -50,7 +47,7 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
 
             if (result.isSuccess) {
                 _mensaje.value = "Punto creado correctamente"
-                cargarPuntos()  // refresca el mapa
+                cargarPuntos()
             } else {
                 _mensaje.value = "Error al crear punto"
             }
@@ -59,7 +56,6 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
         }
     }
 
-    //Actualizar -> PUT
     fun actualizarPunto(id: Int, req: PuntoRequest) {
         viewModelScope.launch {
             _cargando.value = true

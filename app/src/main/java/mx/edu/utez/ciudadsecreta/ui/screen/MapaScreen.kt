@@ -1,13 +1,18 @@
 package mx.edu.utez.ciudadsecreta.ui.screen
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import mx.edu.utez.ciudadsecreta.R
 import mx.edu.utez.ciudadsecreta.data.model.DialogType
+import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
 import mx.edu.utez.ciudadsecreta.viewmodel.MapViewModel
+import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
@@ -16,17 +21,28 @@ import org.osmdroid.views.overlay.Marker
 @Composable
 fun MapaScreen(viewModel: MapViewModel) {
 
+    val context = LocalContext.current
+
+    Configuration.getInstance().load(
+        context,
+        context.getSharedPreferences("osmdroid", Context.MODE_PRIVATE)
+    )
+    Configuration.getInstance().userAgentValue = context.packageName
+
     val puntos by viewModel.puntos.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
     AndroidView(
         factory = { ctx ->
             MapView(ctx).apply {
+                setTileSource(TileSourceFactory.MAPNIK)
                 setMultiTouchControls(true)
                 controller.setZoom(15.0)
+                controller.setCenter(GeoPoint(19.4326, -99.1332))
             }
         },
         update = { map ->
+
             val eventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
 
                 override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
@@ -77,15 +93,23 @@ fun MapaScreen(viewModel: MapViewModel) {
         }
     )
 
-    // Dialogo de agregar rumor (solo texto)
+
     if (uiState.currentDialog == DialogType.ADD) {
         DialogAgregarRumor(
             onDismiss = { viewModel.cerrarDialogos() },
-            onSave = { texto -> viewModel.guardarRumor(texto) }
+            onSave = { texto ->
+                viewModel.crearPunto(
+                    PuntoRequest(
+                        lat = uiState.lat,
+                        lon = uiState.lon,
+                        mensaje = texto,
+                        autor = "Secreto"
+                    )
+                )
+                viewModel.cerrarDialogos()
+            }
         )
     }
-
-// Diálogo combinado (ver / editar / eliminar)
 
     if (uiState.currentDialog == DialogType.VIEW || uiState.currentDialog == DialogType.EDIT) {
 
@@ -108,6 +132,7 @@ fun MapaScreen(viewModel: MapViewModel) {
         )
     }
 }
+
 
 
 /*@Preview(showBackground = true)

@@ -9,6 +9,7 @@ import mx.edu.utez.ciudadsecreta.data.model.DialogType
 import mx.edu.utez.ciudadsecreta.data.model.MapUiState
 import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
 import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
+import mx.edu.utez.ciudadsecreta.data.model.toPuntoMarcado
 import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
 
 class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
@@ -27,7 +28,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
         viewModelScope.launch {
             val result = repo.obtenerPuntos()
             result.onSuccess { puntosList ->
-
+                _puntos.value = puntosList.map { it.toPuntoMarcado() }
             }.onFailure { exception ->
             }
         }
@@ -58,6 +59,16 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
             mensaje = punto.mensaje
         )
     }
+    fun crearPunto(req: PuntoRequest) {
+        viewModelScope.launch {
+            repo.crearPunto(req)
+                .onSuccess {
+                    cargarPuntos()
+                    cerrarDialogos()
+                }
+        }
+    }
+
 
     //Guardar
     fun guardarRumor(texto: String) {

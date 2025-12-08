@@ -29,8 +29,5 @@ interface PuntoApi {
     suspend fun eliminarPunto(
         @Path("id") id: Int
     )
-
-    @POST("puntos")
-    suspend fun agregarPuntos()
-
 }
+

@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import mx.edu.utez.ciudadsecreta.data.retrofit.ApiService
 import mx.edu.utez.ciudadsecreta.data.retrofit.RetrofitClient
+import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
 import mx.edu.utez.ciudadsecreta.repository.UserRepository
 import mx.edu.utez.ciudadsecreta.ui.screen.LoginScreen
 import mx.edu.utez.ciudadsecreta.ui.screen.MapaScreen
@@ -22,6 +23,7 @@ import mx.edu.utez.ciudadsecreta.viewmodel.LoginViewModel
 import mx.edu.utez.ciudadsecreta.viewmodel.MapViewModel
 import mx.edu.utez.ciudadsecreta.viewmodel.factories.LoginViewModelFactory
 import mx.edu.utez.ciudadsecreta.viewmodel.RegisterViewModel
+import mx.edu.utez.ciudadsecreta.viewmodel.factories.MapViewModelFactory
 import mx.edu.utez.ciudadsecreta.viewmodel.factories.RegisterViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +33,8 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val application = context.applicationContext as Application
-
+    val puntoRepository = PuntoRepository(RetrofitClient.puntoApi)
+    val mapViewModel: MapViewModel = viewModel(factory = MapViewModelFactory(puntoRepository))
     val apiService = RetrofitClient.api
     val userRepository = UserRepository(apiService as ApiService)
 
@@ -90,7 +93,7 @@ fun AppNavigation() {
             }
 
             composable(Screen.Mapa.route) {
-                MapaScreen(viewModel = viewModel())
+                MapaScreen(viewModel = mapViewModel)
             }
 
 

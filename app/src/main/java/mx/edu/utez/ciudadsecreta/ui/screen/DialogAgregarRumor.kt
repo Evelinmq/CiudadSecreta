@@ -31,7 +31,7 @@ fun DialogAgregarRumor(
         confirmButton = {
             Button(
                 onClick = { onSave(texto) },
-                enabled = texto.isNotBlank()       // evita guardar un rumor vacío
+                enabled = texto.isNotBlank()
             ) {
                 Text("Guardar")
             }
