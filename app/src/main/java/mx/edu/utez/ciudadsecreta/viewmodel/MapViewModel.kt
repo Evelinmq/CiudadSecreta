@@ -11,6 +11,7 @@ import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
 import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
 import mx.edu.utez.ciudadsecreta.data.model.toPuntoMarcado
 import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
+import java.lang.Exception
 
 class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
 
@@ -26,16 +27,20 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
 
     fun cargarPuntos() {
         viewModelScope.launch {
-            val result = repo.obtenerPuntos()
-            result.onSuccess { puntosList ->
-                _puntos.value = puntosList.map { it.toPuntoMarcado() }
-            }.onFailure { exception ->
+            try {
+                val result = repo.obtenerPuntos()
+                result.onSuccess { puntosList ->
+                    _puntos.value = puntosList.map { it.toPuntoMarcado() }
+                }.onFailure { exception ->
+                    // podrías manejar errores aquí
+                }
+            } catch (e: Exception) {
+                // log
             }
         }
     }
 
-
-    //Abrir diálogos
+    // Abrir diálogo para agregar
     fun prepararNuevoRumor(lat: Double, lon: Double) {
         _uiState.value = MapUiState(
             currentDialog = DialogType.ADD,
@@ -59,63 +64,97 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
             mensaje = punto.mensaje
         )
     }
+
+    // crearPunto que recibe PuntoRequest (tu UI lo llama así)
     fun crearPunto(req: PuntoRequest) {
         viewModelScope.launch {
-            repo.crearPunto(req)
-                .onSuccess {
-                    cargarPuntos()
-                    cerrarDialogos()
-                }
-        }
-    }
+            try {
+                // Aseguramos timestamp en segundos
+                val withTs = PuntoRequest(
+                    lat = req.lat,
+                    lon = req.lon,
+                    mensaje = req.mensaje,
+                    autor = req.autor,
+                    timestamp = (System.currentTimeMillis() / 1000)
+                )
 
-
-    //Guardar
-    fun guardarRumor(texto: String) {
-        val st = uiState.value
-
-        viewModelScope.launch {
-
-            repo.crearPunto(
-                req = PuntoRequest(lat = st.lat, lon = st.lon, mensaje = texto,autor = texto )
-            ).onSuccess {
-                cargarPuntos()
-                cerrarDialogos()
+                repo.crearPunto(withTs)
+                    .onSuccess {
+                        cargarPuntos()
+                        cerrarDialogos()
+                    }.onFailure {
+                        // manejar error
+                    }
+            } catch (e: Exception) {
+                // manejar
             }
         }
     }
 
+    // cuando la UI llama guardarRumor (usa uiState.lat/uiState.lon)
+    fun guardarRumor(texto: String) {
+        val st = uiState.value
 
+        viewModelScope.launch {
+            try {
+                val req = PuntoRequest(
+                    lat = st.lat,
+                    lon = st.lon,
+                    mensaje = texto,
+                    autor = "Secreto",
+                    timestamp = (System.currentTimeMillis() / 1000)
+                )
+                repo.crearPunto(req)
+                    .onSuccess {
+                        cargarPuntos()
+                        cerrarDialogos()
+                    }.onFailure {
+                        // error
+                    }
+            } catch (e: Exception) {
+                // error
+            }
+        }
+    }
 
     fun editarRumor(nuevoMensaje: String) {
         val punto = _uiState.value.puntoSeleccionado ?: return
         viewModelScope.launch {
-            val request = PuntoRequest(
-                lat = punto.lat,
-                lon = punto.lon,
-                mensaje = nuevoMensaje,
-                autor = punto.autor)
-            repo.actualizarPunto(id = punto.id, req = request)
-                .onSuccess {
-                    cargarPuntos()
-                    cerrarDialogos()
-                }
+            try {
+                val request = PuntoRequest(
+                    lat = punto.lat,
+                    lon = punto.lon,
+                    mensaje = nuevoMensaje,
+                    autor = punto.autor,
+                    timestamp = (System.currentTimeMillis() / 1000)
+                )
+                repo.actualizarPunto(id = punto.id, req = request)
+                    .onSuccess {
+                        cargarPuntos()
+                        cerrarDialogos()
+                    }.onFailure {
+                        // manejar
+                    }
+            } catch (e: Exception) {
+                // manejar
+            }
         }
     }
 
     fun borrarRumor() {
         val punto = _uiState.value.puntoSeleccionado ?: return
         viewModelScope.launch {
-            repo.eliminarPunto(punto.id)
-            cargarPuntos()
-            cerrarDialogos()
+            try {
+                repo.eliminarPunto(punto.id)
+                cargarPuntos()
+                cerrarDialogos()
+            } catch (e: Exception) {
+                // manejar
+            }
         }
     }
 
     fun cerrarDialogos() {
         _uiState.value = MapUiState()
     }
-
-
-
 }
