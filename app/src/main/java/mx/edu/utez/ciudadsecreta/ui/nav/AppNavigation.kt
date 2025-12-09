@@ -35,9 +35,9 @@ fun AppNavigation() {
     val application = context.applicationContext as Application
     val puntoRepository = PuntoRepository(RetrofitClient.puntoApi)
     val mapViewModel: MapViewModel = viewModel(factory = MapViewModelFactory(puntoRepository))
-    val apiService = RetrofitClient.api
-    val userRepository = UserRepository(apiService as ApiService)
-
+    //val apiService = RetrofitClient.api
+    //val userRepository = UserRepository(apiService as ApiService)
+    val userRepository = UserRepository(RetrofitClient.api)
     val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(userRepository))
     val registerViewModel: RegisterViewModel = viewModel(factory = RegisterViewModelFactory(
         userRepository

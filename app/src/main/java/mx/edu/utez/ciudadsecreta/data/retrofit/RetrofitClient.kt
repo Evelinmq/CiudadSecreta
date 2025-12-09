@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://:5000/"
+    private const val BASE_URL = "http://192.168.1.76:5000/"
     private var token: String? = null
 
     fun setToken(t: String) {
@@ -44,6 +44,10 @@ object RetrofitClient {
     }
 
     val puntoApi: PuntoApi by lazy { retrofit.create(PuntoApi::class.java) }
+
+    val api: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
+    }
 
     /*private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
