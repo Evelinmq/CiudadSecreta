@@ -32,7 +32,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                 result.onSuccess { puntosList ->
                     _puntos.value = puntosList.map { it.toPuntoMarcado() }
                 }.onFailure { exception ->
-                    // podrías manejar errores aquí
+                    // se pueden manejar errores
                 }
             } catch (e: Exception) {
                 // log
@@ -149,7 +149,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                 cargarPuntos()
                 cerrarDialogos()
             } catch (e: Exception) {
-                // manejar
+                // manejar error
             }
         }
     }
