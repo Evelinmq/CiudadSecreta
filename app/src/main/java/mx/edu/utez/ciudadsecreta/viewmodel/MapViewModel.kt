@@ -11,6 +11,7 @@ import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
 import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
 import mx.edu.utez.ciudadsecreta.data.model.toPuntoMarcado
 import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
+import org.osmdroid.util.GeoPoint
 import java.lang.Exception
 
 class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
@@ -156,5 +157,18 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
 
     fun cerrarDialogos() {
         _uiState.value = MapUiState()
+    }
+
+    // Estado para la ubicación inicial del usuario (puede ser nulo al inicio)
+    private val _userInitialLocation = MutableStateFlow<GeoPoint?>(null)
+    val userInitialLocation = _userInitialLocation.asStateFlow()
+
+    fun setInitialLocation(lat: Double, lon: Double) {
+        _userInitialLocation.value = GeoPoint(lat, lon)
+    }
+
+    // Ubicación por defecto de México (CDMX)
+    fun setDefaultLocation() {
+        _userInitialLocation.value = GeoPoint(19.4326, -99.1332)
     }
 }

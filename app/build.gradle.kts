@@ -103,7 +103,15 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // --- OTROS (Revisa esta línea si da error) ---
+    // Para manejo de permisos en Compose
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+// Para obtener la ubicación (Fused Location Provider)
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+
+    // --- OTROS
     // Si 'firebase.appdistribution.gradle' es un plugin, debe ir en el bloque 'plugins'.
     implementation(libs.firebase.appdistribution.gradle)
+
+
 }
