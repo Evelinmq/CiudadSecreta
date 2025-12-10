@@ -35,8 +35,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
 import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
 
-// Asegúrate de que DialogAgregarRumor y DialogRumorScreen estén accesibles,
-// si están en otro archivo, añade las importaciones aquí.
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -94,13 +92,11 @@ fun MapaScreen(viewModel: MapViewModel) {
                 }
             },
             update = { map ->
-                // Centrado del mapa: Se activa cuando guardamos un nuevo punto
                 if (map.getMapCenter() != centerPoint) {
                     map.controller.animateTo(centerPoint, 15.0, 1000L)
                 }
 
                 val eventsOverlay = MapEventsOverlay(object : MapEventsReceiver {
-                    // Manejo del click en el marcador (cerca de sus coordenadas)
                     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                         if (p == null) return false
                         val markerTapped = puntos.firstOrNull { punto ->
@@ -135,7 +131,7 @@ fun MapaScreen(viewModel: MapViewModel) {
                     val marker = Marker(map).apply {
                         position = GeoPoint(punto.lat, punto.lon)
                         title = punto.mensaje
-                        rumorIcon?.let { this.icon = it } // Asigna la imagen
+                        rumorIcon?.let { this.icon = it }
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     }
                     map.overlays.add(marker)
@@ -161,19 +157,11 @@ fun MapaScreen(viewModel: MapViewModel) {
 
     val currentUserId = "Secreto"
 
-// ...
-
-// Dentro de la Box principal, al final:
-    if (uiState.currentDialog == DialogType.ADD) {
-        // ... DialogAgregarRumor ...
-    }
 
     if (uiState.currentDialog == DialogType.VIEW || uiState.currentDialog == DialogType.EDIT) {
-        // El diálogo utiliza uiState.puntoSeleccionado!! y usuarioActual para la lógica de permisos
         DialogRumorScreen(
             punto = uiState.puntoSeleccionado!!,
-            // No necesitas pasar mensajeActual, el diálogo usa punto.mensaje
-            usuarioActual = currentUserId, // <-- ¡Clave para los permisos!
+            usuarioActual = currentUserId,
 
             onGuardar = { nuevo ->
                 viewModel.editarRumor(nuevo)

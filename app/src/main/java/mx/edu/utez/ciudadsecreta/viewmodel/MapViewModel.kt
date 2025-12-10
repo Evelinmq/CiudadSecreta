@@ -41,15 +41,11 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                 result.onSuccess { puntosList ->
                     _puntos.value = puntosList.map { it.toPuntoMarcado() }
                 }.onFailure { exception ->
-                    // se pueden manejar errores
                 }
             } catch (e: Exception) {
-                // log
             }
         }
     }
-
-    // Abrir diálogo para agregar
     fun prepararNuevoRumor(lat: Double, lon: Double) {
         _uiState.value = MapUiState(
             currentDialog = DialogType.ADD,
@@ -73,12 +69,9 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
             mensaje = punto.mensaje
         )
     }
-
-    // crearPunto que recibe PuntoRequest (tu UI lo llama así)
     fun crearPunto(req: PuntoRequest) {
         viewModelScope.launch {
             try {
-                // Aseguramos timestamp en segundos
                 val withTs = PuntoRequest(
                     lat = req.lat,
                     lon = req.lon,
@@ -92,15 +85,12 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                         cargarPuntos()
                         cerrarDialogos()
                     }.onFailure {
-                        // manejar error
                     }
             } catch (e: Exception) {
-                // manejar
             }
         }
     }
 
-    // cuando la UI llama guardarRumor (usa uiState.lat/uiState.lon)
     fun guardarRumor(texto: String) {
         val st = uiState.value
 
@@ -134,9 +124,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     fun editarRumor(nuevoMensaje: String) {
         val punto = _uiState.value.puntoSeleccionado ?: return
 
-        // Inicia la corrutina en el contexto principal
         viewModelScope.launch {
-            // 1. Inicia el estado de carga (Seguro en Main)
             _isSaving.value = true
 
             try {
@@ -147,25 +135,20 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                     autor = punto.autor,
                     timestamp = (System.currentTimeMillis() / 1000)
                 )
-
-                // 2. Salta al hilo de I/O para la operación de red/DB
                 withContext(Dispatchers.IO) {
                     repo.actualizarPunto(id = punto.id, req = request)
                         .onSuccess {
-                            // 3. Regresa al hilo principal para actualizar la UI
                             withContext(Dispatchers.Main) {
                                 cargarPuntos()
                                 cerrarDialogos()
                             }
                         }.onFailure { exception ->
-                            // Manejo de errores en I/O
                             Log.e("MapViewModel", "Error al actualizar: ${exception.message}")
                         }
                 }
             } catch (e: Exception) {
                 Log.e("MapViewModel", "Excepción general al editar: ${e.message}")
             } finally {
-                // 4. Detiene la carga (Seguro en Main)
                 _isSaving.value = false
             }
         }
@@ -179,7 +162,6 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                 cargarPuntos()
                 cerrarDialogos()
             } catch (e: Exception) {
-                // manejar error
             }
         }
     }
@@ -187,16 +169,12 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     fun cerrarDialogos() {
         _uiState.value = MapUiState()
     }
-
-    // Estado para la ubicación inicial del usuario (puede ser nulo al inicio)
     private val _userInitialLocation = MutableStateFlow<GeoPoint?>(null)
     val userInitialLocation = _userInitialLocation.asStateFlow()
 
     fun setInitialLocation(lat: Double, lon: Double) {
         _userInitialLocation.value = GeoPoint(lat, lon)
     }
-
-    // Ubicación por defecto de México (CDMX)
     fun setDefaultLocation() {
         _userInitialLocation.value = GeoPoint(19.4326, -99.1332)
     }

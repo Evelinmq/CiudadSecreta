@@ -17,12 +17,9 @@ object RetrofitClient {
     private val headerInterceptor = Interceptor { chain ->
         val original: Request = chain.request()
         val builder = original.newBuilder()
-
-        // Timestamp en header (para debug)
         val ts = (System.currentTimeMillis() / 1000).toString()
         builder.addHeader("X-Timestamp", ts)
 
-        // Si hay token, se agrega
         token?.let {
             if (it.isNotBlank()) builder.addHeader("Authorization", "Bearer $it")
         }

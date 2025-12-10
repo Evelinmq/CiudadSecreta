@@ -21,14 +21,10 @@ fun DialogRumorScreen(
     onEliminar: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    // 1. Determina la autoría
     val esAutor = punto.autor == usuarioActual
-
-    // 2. Estados locales para el diálogo
     var texto by remember { mutableStateOf(punto.mensaje) }
     var editando by remember { mutableStateOf(false) }
 
-    // 3. Lógica de activación del botón Guardar
     val textoHaCambiado = texto.isNotBlank() && texto != punto.mensaje
 
     AlertDialog(
@@ -42,7 +38,6 @@ fun DialogRumorScreen(
         text = {
             Column {
                 if (editando) {
-                    // MODO EDICIÓN
                     OutlinedTextField(
                         value = texto,
                         onValueChange = { texto = it },
@@ -50,56 +45,44 @@ fun DialogRumorScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
-                    // MODO VISTA
                     Text(punto.mensaje)
                 }
             }
         },
-
-        // --- Botón de Confirmación (Guardar / Editar) ---
         confirmButton = {
             if (esAutor) {
                 if (editando) {
-                    // MODO EDICIÓN: Botón Guardar
                     Button(
                         onClick = { onGuardar(texto) },
-                        // Solo activo si el texto es válido y ha cambiado
                         enabled = textoHaCambiado
                     ) {
                         Text("Guardar")
                     }
                 } else {
-                    // MODO VISTA: Botón Editar
                     Button(onClick = { editando = true }) {
                         Text("Editar")
                     }
                 }
             }
         },
-
-        // --- Botón de Descarte (Cancelar / Eliminar / Cerrar) ---
         dismissButton = {
             if (esAutor) {
                 OutlinedButton(
                     onClick = {
                         if (editando) {
-                            // 🟢 ACCIÓN: Al cancelar, revertir el texto y salir del modo edición
                             texto = punto.mensaje
                             editando = false
                         } else {
-                            // MODO VISTA: Eliminar (ViewModel se encargará de cerrar el diálogo)
                             onEliminar()
                         }
                     },
                     colors = if (!editando) ButtonDefaults.buttonColors(
-                        // Color de advertencia para una acción destructiva
                         containerColor = MaterialTheme.colorScheme.error
                     ) else ButtonDefaults.outlinedButtonColors()
                 ) {
                     Text(if (editando) "Cancelar" else "Eliminar")
                 }
             } else {
-                // Si NO es autor: Botón Cerrar
                 Button(onClick = onDismiss) {
                     Text("Cerrar")
                 }
