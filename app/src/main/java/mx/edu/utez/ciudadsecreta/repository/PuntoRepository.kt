@@ -1,8 +1,12 @@
 package mx.edu.utez.ciudadsecreta.repository
 
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import mx.edu.utez.ciudadsecreta.data.model.PuntoRequest
 import mx.edu.utez.ciudadsecreta.data.model.PuntoResponse
 import mx.edu.utez.ciudadsecreta.data.retrofit.PuntoApi
+import java.lang.Exception
 
 class PuntoRepository(private val api: PuntoApi) {
 
@@ -22,11 +26,16 @@ class PuntoRepository(private val api: PuntoApi) {
         return safeCall { api.eliminarPunto(id) }
     }
 
-    private inline fun <T> safeCall(block: () -> T): Result<T> {
-        return try {
-            Result.success(block())
-        } catch (e: Exception) {
-            Result.failure(e)
+    // CORRECCIÓN CLAVE: withContext(Dispatchers.IO) asegura la ejecución en segundo plano
+    private suspend inline fun <T> safeCall(crossinline block: suspend () -> T): Result<T> {
+
+        return withContext(Dispatchers.IO) {
+            try {
+                Result.success(block())
+            } catch (e: Exception) {
+                Log.e("PuntoRepository", "Fallo en la llamada a la API: ${e.message}", e)
+                Result.failure(e)
+            }
         }
     }
 }

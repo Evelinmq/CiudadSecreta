@@ -2,6 +2,7 @@ package mx.edu.utez.ciudadsecreta.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +24,8 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
 
 
     fun cargarPuntos() {
-        viewModelScope.launch {
+        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
+        viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
             val result = repo.obtenerPuntos()
@@ -40,7 +42,8 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
 
     //POST -> crea un punto
     fun crearPunto(req: PuntoRequest) {
-        viewModelScope.launch {
+        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
+        viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
             val result = repo.crearPunto(req)
@@ -57,7 +60,8 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
     }
 
     fun actualizarPunto(id: Int, req: PuntoRequest) {
-        viewModelScope.launch {
+        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
+        viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
             val result = repo.actualizarPunto(id, req)
@@ -76,7 +80,8 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
 
     //Eliminar -> DELETE
     fun eliminarPunto(id: Int) {
-        viewModelScope.launch {
+        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
+        viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
             val result = repo.eliminarPunto(id)
