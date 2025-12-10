@@ -1,5 +1,6 @@
 package mx.edu.utez.ciudadsecreta.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -104,20 +105,24 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                     mensaje = texto,
                     autor = "Secreto",
                     timestamp = (System.currentTimeMillis() / 1000)
+
                 )
+
                 repo.crearPunto(req)
                     .onSuccess {
+                        Log.d("MapViewModel", "Punto creado con éxito. Cerrando diálogos.")
                         cargarPuntos()
                         cerrarDialogos()
-                    }.onFailure {
-                        // error
+                    }.onFailure { exception ->
+
+                        Log.e("MapViewModel", "FALLO DE CREACIÓN DE PUNTO (API/Repositorio): ${exception.message}", exception)
+
                     }
             } catch (e: Exception) {
-                // error
+                Log.e("MapViewModel", "EXCEPCIÓN GENERAL EN GUARDAR: ${e.message}", e)
             }
         }
     }
-
     fun editarRumor(nuevoMensaje: String) {
         val punto = _uiState.value.puntoSeleccionado ?: return
         viewModelScope.launch {
