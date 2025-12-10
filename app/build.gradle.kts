@@ -87,6 +87,7 @@ dependencies {
     // --- ROOM (Base de Datos) ---
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.compose.runtime.saveable)
     ksp(libs.androidx.room.compiler) // Compilador KSP
 
     // --- RED Y LOCALIZACIÓN ---

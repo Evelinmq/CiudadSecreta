@@ -3,11 +3,9 @@ package mx.edu.utez.ciudadsecreta.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import mx.edu.utez.ciudadsecreta.data.model.DialogType
 import mx.edu.utez.ciudadsecreta.data.model.MapUiState
 import mx.edu.utez.ciudadsecreta.data.model.PuntoMarcado
@@ -16,6 +14,8 @@ import mx.edu.utez.ciudadsecreta.data.model.toPuntoMarcado
 import mx.edu.utez.ciudadsecreta.repository.PuntoRepository
 import org.osmdroid.util.GeoPoint
 import java.lang.Exception
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
 
@@ -25,31 +25,31 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(MapUiState())
     val uiState = _uiState.asStateFlow()
 
-    // Estado de carga para deshabilitar el botón
+
     private val _isSaving = MutableStateFlow(false)
     val isSaving = _isSaving.asStateFlow()
+
 
     init {
         cargarPuntos()
     }
 
     fun cargarPuntos() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val result = repo.obtenerPuntos()
                 result.onSuccess { puntosList ->
-                    withContext(Dispatchers.Main) {
-                        _puntos.value = puntosList.map { it.toPuntoMarcado() }
-                    }
+                    _puntos.value = puntosList.map { it.toPuntoMarcado() }
                 }.onFailure { exception ->
-                    Log.e("MapViewModel", "Error al cargar puntos: ${exception.message}")
+                    // se pueden manejar errores
                 }
             } catch (e: Exception) {
-                Log.e("MapViewModel", "Excepción al cargar puntos: ${e.message}")
+                // log
             }
         }
     }
 
+    // Abrir diálogo para agregar
     fun prepararNuevoRumor(lat: Double, lon: Double) {
         _uiState.value = MapUiState(
             currentDialog = DialogType.ADD,
@@ -66,15 +66,45 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
         )
     }
 
-    // Lógica de guardado con manejo de isSaving y centrado de mapa
+    fun prepararEdicion() {
+        val punto = _uiState.value.puntoSeleccionado ?: return
+        _uiState.value = _uiState.value.copy(
+            currentDialog = DialogType.EDIT,
+            mensaje = punto.mensaje
+        )
+    }
+
+    // crearPunto que recibe PuntoRequest (tu UI lo llama así)
+    fun crearPunto(req: PuntoRequest) {
+        viewModelScope.launch {
+            try {
+                // Aseguramos timestamp en segundos
+                val withTs = PuntoRequest(
+                    lat = req.lat,
+                    lon = req.lon,
+                    mensaje = req.mensaje,
+                    autor = req.autor,
+                    timestamp = (System.currentTimeMillis() / 1000)
+                )
+
+                repo.crearPunto(withTs)
+                    .onSuccess {
+                        cargarPuntos()
+                        cerrarDialogos()
+                    }.onFailure {
+                        // manejar error
+                    }
+            } catch (e: Exception) {
+                // manejar
+            }
+        }
+    }
+
+    // cuando la UI llama guardarRumor (usa uiState.lat/uiState.lon)
     fun guardarRumor(texto: String) {
         val st = uiState.value
 
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                _isSaving.value = true
-            }
-
+        viewModelScope.launch {
             try {
                 val req = PuntoRequest(
                     lat = st.lat,
@@ -82,33 +112,33 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                     mensaje = texto,
                     autor = "Secreto",
                     timestamp = (System.currentTimeMillis() / 1000)
+
                 )
 
                 repo.crearPunto(req)
                     .onSuccess {
-                        // 🚩 CORRECCIÓN CLAVE: Centrar el mapa en el nuevo punto para forzar el redibujado
-                        withContext(Dispatchers.Main) {
-                            setInitialLocation(st.lat, st.lon)
-                        }
+                        Log.d("MapViewModel", "Punto creado con éxito. Cerrando diálogos.")
+                        cargarPuntos()
+                        cerrarDialogos()
                     }.onFailure { exception ->
-                        Log.e("MapViewModel", "FALLO DE CREACIÓN: ${exception.message}", exception)
+
+                        Log.e("MapViewModel", "FALLO DE CREACIÓN DE PUNTO (API/Repositorio): ${exception.message}", exception)
+
                     }
             } catch (e: Exception) {
                 Log.e("MapViewModel", "EXCEPCIÓN GENERAL EN GUARDAR: ${e.message}", e)
-            } finally {
-                // Ocultar carga y actualizar la lista de puntos
-                withContext(Dispatchers.Main) {
-                    _isSaving.value = false
-                    cargarPuntos()
-                    cerrarDialogos()
-                }
             }
         }
     }
 
     fun editarRumor(nuevoMensaje: String) {
         val punto = _uiState.value.puntoSeleccionado ?: return
-        viewModelScope.launch(Dispatchers.IO) {
+
+        // Inicia la corrutina en el contexto principal
+        viewModelScope.launch {
+            // 1. Inicia el estado de carga (Seguro en Main)
+            _isSaving.value = true
+
             try {
                 val request = PuntoRequest(
                     lat = punto.lat,
@@ -117,27 +147,40 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
                     autor = punto.autor,
                     timestamp = (System.currentTimeMillis() / 1000)
                 )
-                repo.actualizarPunto(id = punto.id, req = request)
-                    .onSuccess {
-                        withContext(Dispatchers.Main) {
-                            cargarPuntos()
-                            cerrarDialogos()
+
+                // 2. Salta al hilo de I/O para la operación de red/DB
+                withContext(Dispatchers.IO) {
+                    repo.actualizarPunto(id = punto.id, req = request)
+                        .onSuccess {
+                            // 3. Regresa al hilo principal para actualizar la UI
+                            withContext(Dispatchers.Main) {
+                                cargarPuntos()
+                                cerrarDialogos()
+                            }
+                        }.onFailure { exception ->
+                            // Manejo de errores en I/O
+                            Log.e("MapViewModel", "Error al actualizar: ${exception.message}")
                         }
-                    }.onFailure { /* Manejo de errores */ }
-            } catch (e: Exception) { /* Manejo de errores */ }
+                }
+            } catch (e: Exception) {
+                Log.e("MapViewModel", "Excepción general al editar: ${e.message}")
+            } finally {
+                // 4. Detiene la carga (Seguro en Main)
+                _isSaving.value = false
+            }
         }
     }
 
     fun borrarRumor() {
         val punto = _uiState.value.puntoSeleccionado ?: return
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 repo.eliminarPunto(punto.id)
-                withContext(Dispatchers.Main) {
-                    cargarPuntos()
-                    cerrarDialogos()
-                }
-            } catch (e: Exception) { /* Manejo de errores */ }
+                cargarPuntos()
+                cerrarDialogos()
+            } catch (e: Exception) {
+                // manejar error
+            }
         }
     }
 
@@ -145,6 +188,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
         _uiState.value = MapUiState()
     }
 
+    // Estado para la ubicación inicial del usuario (puede ser nulo al inicio)
     private val _userInitialLocation = MutableStateFlow<GeoPoint?>(null)
     val userInitialLocation = _userInitialLocation.asStateFlow()
 
@@ -152,6 +196,7 @@ class MapViewModel(private val repo: PuntoRepository) : ViewModel() {
         _userInitialLocation.value = GeoPoint(lat, lon)
     }
 
+    // Ubicación por defecto de México (CDMX)
     fun setDefaultLocation() {
         _userInitialLocation.value = GeoPoint(19.4326, -99.1332)
     }

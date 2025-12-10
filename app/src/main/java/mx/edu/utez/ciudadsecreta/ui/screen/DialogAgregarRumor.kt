@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 fun DialogAgregarRumor(
     onDismiss: () -> Unit,
     onSave: (String) -> Unit,
-    // 🚩 CORRECCIÓN NECESARIA: Acepta el estado de carga
+
     isSaving: Boolean
 ) {
     val texto = rememberSaveable { mutableStateOf("") }

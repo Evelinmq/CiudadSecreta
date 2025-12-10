@@ -64,7 +64,11 @@ fun MapaScreen(viewModel: MapViewModel) {
                 }
             } else if (status.shouldShowRationale) {
                 viewModel.setDefaultLocation()
-                Toast.makeText(context, "Experiencia afectada: Ubicación no disponible.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "Experiencia afectada: Ubicación no disponible.",
+                    Toast.LENGTH_LONG
+                ).show()
             } else {
                 locationPermissionState.launchPermissionRequest()
             }
@@ -100,7 +104,12 @@ fun MapaScreen(viewModel: MapViewModel) {
                     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                         if (p == null) return false
                         val markerTapped = puntos.firstOrNull { punto ->
-                            GeoPoint(p.latitude, p.longitude).distanceToAsDouble(GeoPoint(punto.lat, punto.lon)) < 20
+                            GeoPoint(p.latitude, p.longitude).distanceToAsDouble(
+                                GeoPoint(
+                                    punto.lat,
+                                    punto.lon
+                                )
+                            ) < 20
                         }
                         if (markerTapped != null) {
                             viewModel.abrirRumor(markerTapped)
@@ -150,11 +159,21 @@ fun MapaScreen(viewModel: MapViewModel) {
         )
     }
 
+    val currentUserId = "Secreto"
+
+// ...
+
+// Dentro de la Box principal, al final:
+    if (uiState.currentDialog == DialogType.ADD) {
+        // ... DialogAgregarRumor ...
+    }
+
     if (uiState.currentDialog == DialogType.VIEW || uiState.currentDialog == DialogType.EDIT) {
+        // El diálogo utiliza uiState.puntoSeleccionado!! y usuarioActual para la lógica de permisos
         DialogRumorScreen(
             punto = uiState.puntoSeleccionado!!,
-            mensajeActual = uiState.mensaje,
-            usuarioActual = "Secreto",
+            // No necesitas pasar mensajeActual, el diálogo usa punto.mensaje
+            usuarioActual = currentUserId, // <-- ¡Clave para los permisos!
 
             onGuardar = { nuevo ->
                 viewModel.editarRumor(nuevo)
@@ -172,7 +191,11 @@ fun MapaScreen(viewModel: MapViewModel) {
 }
 
 fun getLastLocation(context: Context, onLocationResult: (Location?) -> Unit) {
-    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    if (ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
         onLocationResult(null)
         return
     }
@@ -184,4 +207,5 @@ fun getLastLocation(context: Context, onLocationResult: (Location?) -> Unit) {
             onLocationResult(null)
         }
     }
+
 }

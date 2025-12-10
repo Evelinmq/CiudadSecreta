@@ -15,6 +15,7 @@ osmdroid = "6.1.18"
 firebaseAppdistributionGradle = "5.2.0"
 retrofit = "2.9.0"
 okhttp = "4.12.0"
+runtimeSaveable = "1.10.0"
 
 [libraries]
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -46,6 +47,7 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 
 osmdroid-android = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osmdroid" }
 firebase-appdistribution-gradle = { group = "com.google.firebase", name = "firebase-appdistribution-gradle", version.ref = "firebaseAppdistributionGradle" }
+androidx-compose-runtime-saveable = { group = "androidx.compose.runtime", name = "runtime-saveable", version.ref = "runtimeSaveable" }
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.13.1" }
