@@ -103,12 +103,12 @@ fun MapaScreen(viewModel: MapViewModel) {
                             GeoPoint(p.latitude, p.longitude).distanceToAsDouble(GeoPoint(punto.lat, punto.lon)) < 20
                         }
                         if (markerTapped != null) {
-                            viewModel.abrirRumor(markerTapped) // Abre el diálogo de Ver/Editar/Eliminar
+                            viewModel.abrirRumor(markerTapped)
                             return true
                         }
                         return false
                     }
-                    // Manejo de pulsación larga para crear un nuevo rumor
+
                     override fun longPressHelper(p: GeoPoint?): Boolean {
                         if (p != null) {
                             viewModel.prepararNuevoRumor(lat = p.latitude, lon = p.longitude)
@@ -120,8 +120,7 @@ fun MapaScreen(viewModel: MapViewModel) {
                 map.overlays.clear()
                 map.overlays.add(eventsOverlay)
 
-                // 🚩 DIBUJO DEL ICONO PERSONALIZADO
-                val rumorIcon = ContextCompat.getDrawable(map.context, R.drawable.rumor_icon)
+                val rumorIcon = ContextCompat.getDrawable(map.context, R.drawable.rumorsito)
 
                 puntos.forEach { punto ->
                     val marker = Marker(map).apply {
@@ -136,21 +135,18 @@ fun MapaScreen(viewModel: MapViewModel) {
             }
         )
 
-        // Muestra un indicador de carga mientras se guarda
         if (isSaving) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 
-
-    // Diálogos de la interfaz de usuario
     if (uiState.currentDialog == DialogType.ADD) {
         DialogAgregarRumor(
             onDismiss = { viewModel.cerrarDialogos() },
             onSave = { texto ->
                 viewModel.guardarRumor(texto)
             },
-            isSaving = isSaving // Pasa el estado de carga
+            isSaving = isSaving
         )
     }
 
@@ -175,8 +171,6 @@ fun MapaScreen(viewModel: MapViewModel) {
     }
 }
 
-
-// --- FUNCIONES AUXILIARES DE UBICACIÓN ---
 fun getLastLocation(context: Context, onLocationResult: (Location?) -> Unit) {
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
         onLocationResult(null)
