@@ -79,7 +79,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = viewModel.nombreUsuario,
             onValueChange = { viewModel.nombreUsuario = it },
-            label = { Text("Nombre de Usuario") },
+            label = { Text("Correo") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier.width(380.dp),
 

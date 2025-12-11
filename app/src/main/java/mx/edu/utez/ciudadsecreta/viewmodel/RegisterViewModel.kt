@@ -11,13 +11,13 @@ import mx.edu.utez.ciudadsecreta.repository.UserRepository
 
 class RegisterViewModel(private val repository: UserRepository) : ViewModel() {
 
-    // Estados para los campos de texto
+
     var nombre by mutableStateOf("")
     var correo by mutableStateOf("")
     var password by mutableStateOf("")
     var confirmPassword by mutableStateOf("")
 
-    // Estado para la UI (Carga y mensajes)
+
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
     var successMessage by mutableStateOf<String?>(null)
