@@ -66,19 +66,16 @@ _Editar un secreto_
 
    ##  🎫 Capturas de Pantalla
 
-[Coloca al menos 3 (investiga como agregarlas y se vean en GitHub)]
-
 | Pantalla de Inicio | Operación CRUD | Uso del Sensor |
 | :---: | :---: | :---: |
-| ![Inicio](url_imagen) | ![CRUD](url_imagen) | ![Sensor](url_imagen) |
+| ![inicio](https://github.com/user-attachments/assets/244f57c5-5502-4fe9-93e2-9dda12418518) | ![crud](https://github.com/user-attachments/assets/245ad1bd-c5f0-49cd-b90b-87a2f957c34d) |  ![sensor](https://github.com/user-attachments/assets/35ebbafc-92e0-426a-91b2-f9291f83387b)
+
 
 ---
 
 ## 🎡 Instalación y Releases
 
 El ejecutable firmado (.apk) se encuentra disponible en la sección de **Releases** de este repositorio.
-
-[Liga correctamente tu link de releases en la siguiente sección]
 
 1.  Ve a la sección "Releases" (o haz clic [aquí](link_a_tus_releases)).
 2.  Descarga el archivo `.apk` de la última versión.

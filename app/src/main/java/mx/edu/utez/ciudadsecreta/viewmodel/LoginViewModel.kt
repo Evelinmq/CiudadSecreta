@@ -19,7 +19,7 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
 
     fun onLoginClick() {
         if (nombreUsuario.isBlank() || contrasena.isBlank()) {
-            errorMessage = "Ingresa matrícula y contraseña"
+            errorMessage = "Ingresa correo y contraseña"
             return
         }
 

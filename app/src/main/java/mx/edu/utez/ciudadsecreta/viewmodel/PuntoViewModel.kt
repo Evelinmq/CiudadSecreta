@@ -24,7 +24,6 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
 
 
     fun cargarPuntos() {
-        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
         viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
@@ -40,9 +39,7 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
         }
     }
 
-    //POST -> crea un punto
     fun crearPunto(req: PuntoRequest) {
-        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
         viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
@@ -60,7 +57,6 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
     }
 
     fun actualizarPunto(id: Int, req: PuntoRequest) {
-        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
         viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
@@ -77,10 +73,7 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
         }
     }
 
-
-    //Eliminar -> DELETE
     fun eliminarPunto(id: Int) {
-        // 🚩 CORRECCIÓN: Usar Dispatchers.IO
         viewModelScope.launch(Dispatchers.IO) {
             _cargando.value = true
 
@@ -97,7 +90,6 @@ class PuntoViewModel(private val repo: PuntoRepository) : ViewModel() {
         }
     }
 
-    //Limpiar los mensajes
     fun limpiarMensaje() {
         _mensaje.value = null
     }
